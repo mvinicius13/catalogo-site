@@ -107,7 +107,16 @@ return (
                   className="w-full h-40 object-contain bg-gray-50 rounded mb-2 border border-black" />
                 <h2 className="text-base font-semibold mb-1">{item.Fabricante} {item.Modelo}</h2>
                 <div className="flex justify-between text-xs text-gray-500 mb-2">
-                  <span className="bg-gray-100 px-2 py-1 rounded">SKU: {item.SKU}</span>
+                  <span className="bg-gray-100 px-2 py-1 rounded flex items-center space-x-1">
+    <span>SKU: {item.SKU}</span>
+    <button
+      onClick={() => navigator.clipboard.writeText(item.SKU)}
+      title="Copiar SKU"
+      className="text-blue-600 hover:text-blue-800"
+    >
+      📋
+    </button>
+  </span>
                   <span className="bg-gray-100 px-2 py-1 rounded">Qtd: {item['Quantidade em CB']} unid.</span>
                 </div>
                 <p className="text-sm text-gray-600">{item['Processador Modelo'] || item['Processador']}</p>
@@ -164,6 +173,19 @@ return (
       <footer className="text-xs text-center text-gray-400 mt-10">
         As imagens são meramente ilustrativas e foram obtidas automaticamente por pesquisa no Google.
       </footer>
+
+      {/* Botão flutuante do WhatsApp */}
+      <a
+        href="https://wa.me/5511994448143"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-5 right-5 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg transition"
+        title="Fale conosco pelo WhatsApp"
+      >
+        <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
+          <path d="M12 0C5.373 0 0 5.373 0 12c0 2.11.548 4.084 1.507 5.812L0 24l6.352-1.671A11.942 11.942 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm-.004 22.002c-1.888 0-3.718-.499-5.317-1.44l-.38-.226-3.769.992.999-3.67-.246-.377a9.926 9.926 0 01-1.539-5.305c0-5.514 4.486-10 10-10 2.674 0 5.187 1.04 7.071 2.929A9.942 9.942 0 0122 12c0 5.514-4.486 10-10.004 10.002zm5.558-7.627c-.305-.152-1.803-.891-2.083-.992-.28-.102-.484-.152-.688.152-.203.305-.789.992-.968 1.195-.178.203-.356.229-.66.076-.305-.152-1.288-.475-2.455-1.515-.906-.808-1.52-1.808-1.697-2.113-.178-.305-.019-.469.134-.621.137-.136.305-.356.458-.533.153-.178.203-.305.305-.508.102-.203.051-.381-.025-.533-.076-.152-.688-1.661-.942-2.276-.248-.595-.5-.515-.688-.524l-.584-.01c-.203 0-.534.076-.813.38-.28.305-1.066 1.04-1.066 2.535s1.092 2.944 1.244 3.147c.152.203 2.151 3.286 5.215 4.605.729.315 1.296.504 1.739.645.731.233 1.396.2 1.923.122.587-.087 1.803-.736 2.058-1.448.254-.711.254-1.322.178-1.448-.076-.127-.28-.203-.585-.356z"/>
+        </svg>
+      </a>
     </div>
   );
 
