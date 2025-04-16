@@ -49,26 +49,32 @@ export default function Catalog({ categoria }) {
                 alt={item.Modelo}
                 className="w-full h-40 object-contain bg-gray-50 rounded mb-2 border border-black"
               />
-              <div className="flex justify-between items-start mb-1">
-                <div>
-                  <h2 className="text-base font-semibold">{item.Fabricante} {item.Modelo}</h2>
-                </div>
-                <div className="text-right text-xs text-gray-500">
-                  <p>SKU: {item.SKU}</p>
-                  <p>Qtd: {item['Quantidade em CB']} unid.</p>
-                </div>
+              <h2 className="text-base font-semibold mb-1">{item.Fabricante} {item.Modelo}</h2>
+
+              <div className="flex justify-between text-xs text-gray-500 mb-2">
+                <span className="bg-gray-100 px-2 py-1 rounded">SKU: {item.SKU}</span>
+                <span className="bg-gray-100 px-2 py-1 rounded">Qtd: {item['Quantidade em CB']} unid.</span>
               </div>
+
               <p className="text-sm text-gray-600">{item['Processador Modelo'] || item['Processador']}</p>
               <p className="text-sm">{item.Memória} RAM / {item.Armazenamento}</p>
 
-              <div className="grid grid-cols-2 gap-1 text-xs text-gray-700 mt-2">
-                <p><strong>Chassi:</strong> {item['Classificação de Chassi']}</p>
-                <p><strong>Tela:</strong> {item['Classificação de Tela']}</p>
-                <p><strong>Bateria:</strong> {item['Estado da Bateria']}</p>
-                <p><strong>Touch:</strong> {touch}</p>
-                <p><strong>Avaria de funcionalidade:</strong> {avaria}</p>
-                <p><strong>Idioma:</strong> {item['Linguagem']}</p>
-                <p><strong>Resolução:</strong> {item['Resolução']}</p>
+              <div className="grid grid-cols-1 gap-1 text-xs text-gray-700 mt-2">
+                <div className="flex justify-between border rounded px-2 py-1 bg-gray-50">
+                  <span><strong>Chassi:</strong> {item['Classificação de Chassi']}</span>
+                  <span><strong>Tela:</strong> {item['Classificação de Tela']}</span>
+                </div>
+                <div className="flex justify-between border rounded px-2 py-1 bg-gray-50">
+                  <span><strong>Bateria:</strong> {item['Estado da Bateria']}</span>
+                  <span><strong>Touch:</strong> {touch}</span>
+                </div>
+                <div className="flex justify-between border rounded px-2 py-1 bg-gray-50">
+                  <span><strong>Avaria:</strong> {avaria}</span>
+                  <span><strong>Idioma:</strong> {item['Linguagem']}</span>
+                </div>
+                <div className="flex justify-between border rounded px-2 py-1 bg-gray-50">
+                  <span><strong>Resolução:</strong> {item['Resolução']}</span>
+                </div>
               </div>
 
               <p className="mt-2 text-black font-bold text-lg">
