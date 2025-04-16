@@ -64,9 +64,11 @@ export default function Catalog({ categoria }) {
   
 
 return (
-    <div className="bg-black w-full py-4 px-6">
-      <img src="/logo.png" alt="Logo" className="h-10" />
-    </div>
+    <>
+      <div className="bg-black w-full py-4 px-6">
+        <img src="/logo.png" alt="Logo" className="h-10" />
+      </div>
+      <div className="flex flex-col gap-4">
 
     <div className="flex flex-col gap-4">
       <div className="flex justify-between items-center text-sm text-gray-600">
@@ -108,9 +110,11 @@ return (
 
             
 return (
-    <div className="bg-black w-full py-4 px-6">
-      <img src="/logo.png" alt="Logo" className="h-10" />
-    </div>
+    <>
+      <div className="bg-black w-full py-4 px-6">
+        <img src="/logo.png" alt="Logo" className="h-10" />
+      </div>
+      <div className="flex flex-col gap-4">
 
               <div key={index} className="bg-white p-4 rounded-2xl shadow">
                 <img src={item['Link Imagem']} alt={item.Modelo}
@@ -211,6 +215,38 @@ return (
         </svg>
       </a>
     </div>
+      <footer className="text-xs text-center text-gray-400 mt-10">
+        As imagens são meramente ilustrativas e foram obtidas automaticamente por pesquisa no Google.
+      </footer>
+
+      {/* Botão flutuante para baixar Excel */}
+      <a
+        href="https://docs.google.com/spreadsheets/d/1FQRXOr27B1N7PK7NhqQmPi1kaqQqImA-iZYjRecqIw0/export?format=xlsx"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-24 right-5 bg-green-700 hover:bg-green-800 text-white p-3 rounded-full shadow-lg transition"
+        title="Baixar catálogo em Excel"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 fill-current" viewBox="0 0 24 24">
+          <path d="M19 2H8a2 2 0 00-2 2v2H5a2 2 0 00-2 2v12a2 2 0 002 2h11a2 2 0 002-2v-2h1a2 2 0 002-2V4a2 2 0 00-2-2zM5 8h1v10H5V8zm13 10a1 1 0 01-1 1H8a1 1 0 01-1-1V4h11v14zm3-4a1 1 0 01-1 1h-1V8h1a1 1 0 011 1v5z"/>
+          <path d="M10.293 12l1.853 1.854a.5.5 0 01-.707.707L9.586 12l1.853-1.854a.5.5 0 11.707.707L10.293 12z"/>
+        </svg>
+      </a>
+
+      {/* Botão flutuante do WhatsApp */}
+      <a
+        href="https://wa.me/5511994448143"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-5 right-5 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg transition"
+        title="Fale conosco pelo WhatsApp"
+      >
+        <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
+          <path d="M12 0C5.373 0 0 5.373 0 12c0 2.11.548 4.084 1.507 5.812L0 24l6.352-1.671A11.942 11.942 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm-.004 22.002c-1.888 0-3.718-.499-5.317-1.44l-.38-.226-3.769.992.999-3.67-.246-.377a9.926 9.926 0 01-1.539-5.305c0-5.514 4.486-10 10-10 2.674 0 5.187 1.04 7.071 2.929A9.942 9.942 0 0122 12c0 5.514-4.486 10-10.004 10.002zm5.558-7.627c-.305-.152-1.803-.891-2.083-.992-.28-.102-.484-.152-.688.152-.203.305-.789.992-.968 1.195-.178.203-.356.229-.66.076-.305-.102-1.289-.475-2.457-1.514-.907-.809-1.52-1.808-1.696-2.113-.178-.305-.02-.47.134-.621.138-.137.305-.356.457-.533.152-.178.203-.305.305-.508.102-.203.05-.381-.025-.533-.076-.152-.688-1.66-.944-2.28-.25-.601-.503-.521-.688-.53l-.584-.01c-.203 0-.533.076-.812.356s-1.066 1.043-1.066 2.547c0 1.504 1.092 2.957 1.245 3.16.152.203 2.152 3.285 5.227 4.61.73.314 1.3.5 1.743.64.732.233 1.398.2 1.922.122.586-.087 1.803-.738 2.059-1.454.254-.717.254-1.33.178-1.454-.076-.122-.28-.203-.584-.355z"/>
+        </svg>
+      </a>
+    </>
   );
+
 
 }
