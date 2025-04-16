@@ -62,7 +62,12 @@ export default function Catalog({ categoria }) {
   };
 
   
+
 return (
+    <div className="bg-black w-full py-4 px-6">
+      <img src="/logo.png" alt="Logo" className="h-10" />
+    </div>
+
     <div className="flex flex-col gap-4">
       <div className="flex justify-between items-center text-sm text-gray-600">
         <p>Os dados atualizam automaticamente a cada 10 minutos.</p>
@@ -101,7 +106,12 @@ return (
             const avaria = item['Avarias de Funcionalidade']?.trim() || 'Sem avarias';
             const touch = item['Touch Screen']?.trim() || 'Não';
 
-            return (
+            
+return (
+    <div className="bg-black w-full py-4 px-6">
+      <img src="/logo.png" alt="Logo" className="h-10" />
+    </div>
+
               <div key={index} className="bg-white p-4 rounded-2xl shadow">
                 <img src={item['Link Imagem']} alt={item.Modelo}
                   className="w-full h-40 object-contain bg-gray-50 rounded mb-2 border border-black" />
