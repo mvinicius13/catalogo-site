@@ -38,38 +38,43 @@ export default function Catalog({ categoria }) {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {produtos.map((item, index) => (
-          <div key={index} className="bg-white p-4 rounded-2xl shadow hover:shadow-lg transition">
-            <img
-              src={item['Link Imagem']}
-              alt={item.Modelo}
-              className="w-full h-40 object-contain bg-gray-50 rounded mb-2 border border-black"
-            />
-            <div className="flex justify-between items-center mb-1">
-              <h2 className="text-base font-semibold">{item.Fabricante} {item.Modelo}</h2>
-              <span className="text-xs text-gray-500">SKU: {item.SKU}</span>
-            </div>
-            <p className="text-sm text-gray-600">{item['Processador Modelo'] || item['Processador']}</p>
-            <p className="text-sm">{item.Memória} RAM / {item.Armazenamento}</p>
+        {produtos.map((item, index) => {
+          const avaria = item['Avarias de Funcionalidade']?.trim() || 'Sem avarias';
+          const touch = item['Touch Screen']?.trim() || 'Não';
 
-            <div className="grid grid-cols-2 gap-1 text-xs text-gray-700 mt-2">
-              <p><strong>Chassi:</strong> {item['Classificação de Chassi']}</p>
-              <p><strong>Tela:</strong> {item['Classificação de Tela']}</p>
-              <p><strong>Bateria:</strong> {item['Estado da Bateria']}</p>
-              <p><strong>Touch:</strong> {item['Touch Screen']}</p>
-              <p><strong>Avaria:</strong> {item['Avarias de Funcionalidade']}</p>
-              <p><strong>Idioma:</strong> {item['Linguagem']}</p>
-              <p><strong>Resolução:</strong> {item['Resolução']}</p>
-            </div>
+          return (
+            <div key={index} className="bg-white p-4 rounded-2xl shadow hover:shadow-lg transition">
+              <img
+                src={item['Link Imagem']}
+                alt={item.Modelo}
+                className="w-full h-40 object-contain bg-gray-50 rounded mb-2 border border-black"
+              />
+              <div className="flex justify-between items-center mb-1">
+                <h2 className="text-base font-semibold">{item.Fabricante} {item.Modelo}</h2>
+                <span className="text-xs text-gray-500">SKU: {item.SKU}</span>
+              </div>
+              <p className="text-sm text-gray-600">{item['Processador Modelo'] || item['Processador']}</p>
+              <p className="text-sm">{item.Memória} RAM / {item.Armazenamento}</p>
 
-            <p className="mt-2 text-black font-bold text-lg">
-              {item[' Valor PIX ']} <span className="text-sm font-normal">à vista, via PIX</span>
-            </p>
-            <p className="text-green-600 font-semibold text-sm">
-              {item[' Valor Cartão 10x ']} <span className="font-normal">em até 10x no cartão de crédito</span>
-            </p>
-          </div>
-        ))}
+              <div className="grid grid-cols-2 gap-1 text-xs text-gray-700 mt-2">
+                <p><strong>Chassi:</strong> {item['Classificação de Chassi']}</p>
+                <p><strong>Tela:</strong> {item['Classificação de Tela']}</p>
+                <p><strong>Bateria:</strong> {item['Estado da Bateria']}</p>
+                <p><strong>Touch:</strong> {touch}</p>
+                <p><strong>Avaria de funcionalidade:</strong> {avaria}</p>
+                <p><strong>Idioma:</strong> {item['Linguagem']}</p>
+                <p><strong>Resolução:</strong> {item['Resolução']}</p>
+              </div>
+
+              <p className="mt-2 text-black font-bold text-lg">
+                {item[' Valor PIX ']} <span className="text-sm font-normal">à vista, via PIX</span>
+              </p>
+              <p className="text-green-600 font-semibold text-sm">
+                {item[' Valor Cartão 10x ']} <span className="font-normal">em até 10x no cartão de crédito</span>
+              </p>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
