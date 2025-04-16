@@ -17,13 +17,12 @@ export default function Catalog({ categoria }) {
   };
 
   useEffect(() => {
-    fetchData(); // busca inicial
-
+    fetchData();
     const intervalo = setInterval(() => {
-      fetchData(); // atualiza a cada 10 minutos
+      fetchData();
     }, 10 * 60 * 1000);
 
-    return () => clearInterval(intervalo); // limpa intervalo ao desmontar
+    return () => clearInterval(intervalo);
   }, [categoria]);
 
   return (
@@ -31,10 +30,10 @@ export default function Catalog({ categoria }) {
       <div className="flex justify-between items-center mb-4 text-sm text-gray-600">
         <p>Os dados atualizam automaticamente a cada 10 minutos.</p>
         <button
-          onClick={fetchData}
+          onClick={() => window.location.reload()}
           className="px-3 py-1 bg-blue-100 text-blue-800 rounded hover:bg-blue-200 transition"
         >
-          🔄 Atualizar agora
+          🔄 Recarregar página
         </button>
       </div>
 
