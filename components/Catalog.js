@@ -65,8 +65,8 @@ export default function Catalog({ categoria }) {
   return (
     <>
       {/* Topo com logo */}
-      <div className="bg-black w-full py-4 px-6">
-        <img src="/logo.png" alt="Logo" className="h-10" />
+      <div className="w-full px-4 py-4">
+        <img src="/logo.png" alt="Logo LevelMicro" className="h-10" />
       </div>
 
       {/* Cabeçalho com aviso */}
@@ -205,7 +205,21 @@ export default function Catalog({ categoria }) {
         <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 fill-current" viewBox="0 0 24 24">
           <path d="M19 2H8a2 2 0 00-2 2v2H5a2 2 0 00-2 2v12a2 2 0 002 2h11a2 2 0 002-2v-2h1a2 2 0 002-2V4a2 2 0 00-2-2zM5 8h1v10H5V8zm13 10a1 1 0 01-1 1H8a1 1 0 01-1-1V4h11v14zm3-4a1 1 0 01-1 1h-1V8h1a1 1 0 011 1v5z"/>
           <path d="M10.293 12l1.853 1.854a.5.5 0 01-.707.707L9.586 12l1.853-1.854a.5.5 0 11.707.707L10.293 12z"/>
-        </a>
+        </svg>
+      </a>
+
+      {/* Botão flutuante: WhatsApp */}
+      <a
+        href="https://wa.me/5511994448143"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-5 right-5 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg transition"
+        title="Fale conosco pelo WhatsApp"
+      >
+        <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
+          <path d="M12 0C5.373 0 0 5.373 0 12c0 2.11.548 4.084 1.507 5.812L0 24l6.352-1.671A11.942 11.942 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm-.004 22.002c-1.888 0-3.718-.499-5.317-1.44l-.38-.226-3.769.992.999-3.67-.246-.377a9.926 9.926 0 01-1.539-5.305c0-5.514 4.486-10 10-10 2.674 0 5.187 1.04 7.071 2.929A9.942 9.942 0 0122 12c0 5.514-4.486 10-10.004 10.002zm5.558-7.627c-.305-.152-1.803-.891-2.083-.992-.28-.102-.484-.152-.688.152-.203.305-.789.992-.968 1.195-.178.203-.356.229-.66.076-.305-.1...
+        </svg>
+      </a>
     </>
   );
 }
