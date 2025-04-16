@@ -52,6 +52,16 @@ export default function Catalog({ categoria }) {
             <p className="text-sm text-gray-600">{item['Processador Modelo'] || item['Processador']}</p>
             <p className="text-sm">{item.Memória} RAM / {item.Armazenamento}</p>
 
+            <div className="grid grid-cols-2 gap-1 text-xs text-gray-700 mt-2">
+              <p><strong>Chassi:</strong> {item['Classificação de Chassi']}</p>
+              <p><strong>Tela:</strong> {item['Classificação de Tela']}</p>
+              <p><strong>Bateria:</strong> {item['Estado da Bateria']}</p>
+              <p><strong>Touch:</strong> {item['Touch Screen']}</p>
+              <p><strong>Avaria:</strong> {item['Avarias de Funcionalidade']}</p>
+              <p><strong>Idioma:</strong> {item['Linguagem']}</p>
+              <p><strong>Resolução:</strong> {item['Resolução']}</p>
+            </div>
+
             <p className="mt-2 text-black font-bold text-lg">
               {item[' Valor PIX ']} <span className="text-sm font-normal">à vista, via PIX</span>
             </p>
