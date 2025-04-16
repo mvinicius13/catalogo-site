@@ -29,8 +29,8 @@ export default function Catalog({ categoria }) {
           <h2 className="text-base font-semibold">{item.Fabricante} {item.Modelo}</h2>
           <p className="text-sm text-gray-600">{item['Processador Modelo'] || item['Processador']}</p>
           <p className="text-sm">{item.Memória} / {item.Armazenamento}</p>
-          <p className="mt-2 text-green-600 font-semibold">R$ {item[' Valor PIX ']}</p>
-          <p className="text-blue-600 font-semibold">R$ {item[' Valor Cartão 10x ']}</p>
+          <p className="mt-2 text-green-600 font-semibold">{item[' Valor PIX ']}</p>
+          <p className="text-blue-600 font-semibold">{item[' Valor Cartão 10x ']}</p>
         </div>
       ))}
     </div>
