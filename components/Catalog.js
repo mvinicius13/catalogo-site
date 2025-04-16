@@ -74,7 +74,7 @@ return (
         </button>
       </div>
       <div className="flex flex-col md:flex-row gap-6">
-      <aside className="md:w-1/4 space-y-4">
+      <aside className="w-full md:w-1/5 lg:w-[15%] space-y-4">
         <h2 className="text-lg font-semibold">Filtros</h2>
         {filtrosDisponiveis.map(filtro => (
           <div key={filtro}>
@@ -95,7 +95,7 @@ return (
         ))}
       </aside>
 
-      <main className="md:w-3/4">
+      <main className="w-full md:w-4/5 lg:w-[85%]">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {itensPagina.map((item, index) => {
             const avaria = item['Avarias de Funcionalidade']?.trim() || 'Sem avarias';
