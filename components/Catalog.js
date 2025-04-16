@@ -25,7 +25,10 @@ export default function Catalog({ categoria }) {
             alt={item.Modelo}
             className="w-full h-40 object-contain bg-gray-50 rounded mb-2 border border-black"
           />
-          <h2 className="text-base font-semibold">{item.Fabricante} {item.Modelo}</h2>
+          <div className="flex justify-between items-center mb-1">
+            <h2 className="text-base font-semibold">{item.Fabricante} {item.Modelo}</h2>
+            <span className="text-xs text-gray-500">SKU: {item.SKU}</span>
+          </div>
           <p className="text-sm text-gray-600">{item['Processador Modelo'] || item['Processador']}</p>
           <p className="text-sm">{item.Memória} RAM / {item.Armazenamento}</p>
 
