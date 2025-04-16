@@ -1,0 +1,18 @@
+
+{
+  "name": "catalogo-planilha",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "autoprefixer": "^10.4.0",
+    "next": "latest",
+    "postcss": "^8.4.0",
+    "react": "latest",
+    "react-dom": "latest",
+    "tailwindcss": "^3.0.0"
+  }
+}
