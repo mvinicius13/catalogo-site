@@ -61,8 +61,19 @@ export default function Catalog({ categoria }) {
     return [...new Set(todos)];
   };
 
-  return (
-    <div className="flex flex-col md:flex-row gap-6">
+  
+return (
+    <>
+      <div className="flex justify-between items-center mb-4 text-sm text-gray-600">
+        <p>Os dados atualizam automaticamente a cada 10 minutos.</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="px-3 py-1 bg-blue-100 text-blue-800 rounded hover:bg-blue-200 transition"
+        >
+          🔄 Recarregar página
+        </button>
+      </div>
+      <div className="flex flex-col md:flex-row gap-6">
       <aside className="md:w-1/4 space-y-4">
         <h2 className="text-lg font-semibold">Filtros</h2>
         {filtrosDisponiveis.map(filtro => (
@@ -149,5 +160,13 @@ export default function Catalog({ categoria }) {
         )}
       </main>
     </div>
+  );
+}
+
+
+      <footer className="text-xs text-center text-gray-400 mt-10">
+        As imagens são meramente ilustrativas e foram obtidas automaticamente por pesquisa no Google.
+      </footer>
+    </>
   );
 }
