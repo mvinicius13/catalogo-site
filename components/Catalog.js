@@ -63,8 +63,8 @@ export default function Catalog({ categoria }) {
 
   
 return (
-    <>
-      <div className="flex justify-between items-center mb-4 text-sm text-gray-600">
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-between items-center text-sm text-gray-600">
         <p>Os dados atualizam automaticamente a cada 10 minutos.</p>
         <button
           onClick={() => window.location.reload()}
@@ -160,13 +160,11 @@ return (
         )}
       </main>
     </div>
-  );
-}
-
 
       <footer className="text-xs text-center text-gray-400 mt-10">
         As imagens são meramente ilustrativas e foram obtidas automaticamente por pesquisa no Google.
       </footer>
-    </>
+    </div>
   );
+
 }
