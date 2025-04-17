@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { Copy } from 'lucide-react';
 
@@ -22,6 +23,7 @@ export default function Catalog({ categoria }) {
   const [produtos, setProdutos] = useState([]);
   const [filtros, setFiltros] = useState({});
   const [pagina, setPagina] = useState(1);
+  const [ordenacao, setOrdenacao] = useState('');
 
   useEffect(() => {
     fetch(urls[categoria])
@@ -34,6 +36,7 @@ export default function Catalog({ categoria }) {
         setProdutos(normalizados);
         setFiltros({});
         setPagina(1);
+        setOrdenacao('');
       });
   }, [categoria]);
 
@@ -50,11 +53,25 @@ export default function Catalog({ categoria }) {
   };
 
   const aplicarFiltros = (lista) => {
-    return lista.filter((item) =>
+    let filtrada = lista.filter((item) =>
       Object.entries(filtros).every(([filtro, valores]) =>
         valores.length === 0 || valores.includes(item[filtro])
       )
     );
+
+    if (ordenacao === 'precoMenor') {
+      filtrada.sort((a, b) =>
+        parseFloat(a[' Valor PIX '].replace(/[R$\s.]/g, '').replace(',', '.')) -
+        parseFloat(b[' Valor PIX '].replace(/[R$\s.]/g, '').replace(',', '.'))
+      );
+    } else if (ordenacao === 'precoMaior') {
+      filtrada.sort((a, b) =>
+        parseFloat(b[' Valor PIX '].replace(/[R$\s.]/g, '').replace(',', '.')) -
+        parseFloat(a[' Valor PIX '].replace(/[R$\s.]/g, '').replace(',', '.'))
+      );
+    }
+
+    return filtrada;
   };
 
   const dadosFiltrados = aplicarFiltros(produtos);
@@ -73,27 +90,39 @@ export default function Catalog({ categoria }) {
 
   return (
     <>
-      <div className="w-full px-4 py-4 flex items-center justify-between">
-        <img src="/logo.png" alt="Logo LevelMicro" className="h-20" />
-        <button
-          onClick={() => window.location.reload()}
-          className="ml-auto px-3 py-1 bg-blue-100 text-blue-800 rounded hover:bg-blue-200 transition text-sm"
-        >
-          🔄 Recarregar página
-        </button>
+      <div className="w-full px-4 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between bg-white">
+        <img src="/logo.png" alt="Logo LevelMicro" className="h-32 mb-2 sm:mb-0" />
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+          <select
+            value={ordenacao}
+            onChange={(e) => setOrdenacao(e.target.value)}
+            className="border rounded px-3 py-2 text-sm"
+          >
+            <option value="">Ordenar por</option>
+            <option value="precoMenor">Preço: menor para maior</option>
+            <option value="precoMaior">Preço: maior para menor</option>
+          </select>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
+          >
+            🔄 Recarregar
+          </button>
+        </div>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-6 px-4">
+      <div className="flex flex-col md:flex-row gap-6 px-4 mt-4">
         <aside className="w-full md:w-1/5 lg:w-[15%] space-y-4">
-          <h2 className="text-lg font-semibold">Filtros</h2>
+          <h2 className="text-lg font-semibold text-gray-700">Filtros</h2>
           {filtrosDisponiveis.map((filtro) => (
             <div key={filtro}>
-              <h3 className="text-sm font-bold mb-1">{filtro}</h3>
+              <h3 className="text-sm font-semibold mb-1">{filtro}</h3>
               <div className="space-y-1">
                 {valoresUnicos(filtro).map((valor, idx) => (
                   <label key={idx} className="flex items-center space-x-2 text-sm">
                     <input
                       type="checkbox"
+                      className="accent-blue-600"
                       checked={filtros[filtro]?.includes(valor) || false}
                       onChange={() => handleFiltro(filtro, valor)}
                     />
@@ -112,21 +141,20 @@ export default function Catalog({ categoria }) {
               const touch = item['Touch Screen']?.trim() || 'Não';
 
               return (
-                <div key={index} className="bg-white p-4 rounded-2xl shadow">
+                <div key={index} className="bg-white p-4 rounded-xl shadow border border-gray-200 hover:shadow-md transition">
                   <img
                     src={item['Link Imagem']}
                     alt={item.Modelo}
-                    className="w-full h-40 object-contain bg-gray-50 rounded mb-2 border border-black"
+                    className="w-full h-40 object-contain bg-gray-50 rounded mb-2"
                   />
-                  <h2 className="text-base font-semibold mb-1">
+                  <h2 className="text-base font-semibold text-gray-800 mb-1">
                     {item.Fabricante} {item.Modelo}
                   </h2>
-                  <div className="flex justify-between text-xs text-gray-500 mb-2">
-                    <span className="bg-gray-100 px-2 py-1 rounded flex items-center space-x-1">
-                      <span>SKU: {item.SKU}</span>
+                  <div className="flex justify-between text-xs text-gray-600 mb-2">
+                    <span className="bg-gray-100 px-2 py-1 rounded flex items-center gap-1">
+                      SKU: {item.SKU}
                       <button
                         onClick={() => copiarSKU(item.SKU)}
-                        title="Copiar SKU"
                         className="text-blue-600 hover:text-blue-800"
                       >
                         📋
@@ -136,10 +164,10 @@ export default function Catalog({ categoria }) {
                       Qtd: {item['Quantidade em CB']} unid.
                     </span>
                   </div>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-700">
                     {item['Processador Modelo'] || item['Processador']}
                   </p>
-                  <p className="text-sm">{item.Memória} RAM / {item.Armazenamento}</p>
+                  <p className="text-sm text-gray-700">{item.Memória} RAM / {item.Armazenamento}</p>
 
                   <div className="grid grid-cols-1 gap-1 text-xs text-gray-700 mt-2">
                     <div className="flex justify-between border rounded px-2 py-1 bg-gray-50">
@@ -160,10 +188,10 @@ export default function Catalog({ categoria }) {
                   </div>
 
                   <p className="mt-2 text-black font-bold text-lg">
-                    {item[' Valor PIX ']} <span className="text-sm font-normal">à vista, via PIX</span>
+                    {item[' Valor PIX ']} <span className="text-sm font-normal">à vista via PIX</span>
                   </p>
                   <p className="text-green-600 font-semibold text-sm">
-                    {item[' Valor Cartão 10x ']} <span className="font-normal">em até 10x no cartão de crédito</span>
+                    {item[' Valor Cartão 10x ']} <span className="font-normal">em até 10x no cartão</span>
                   </p>
                 </div>
               );
@@ -186,34 +214,39 @@ export default function Catalog({ categoria }) {
         </main>
       </div>
 
-      <footer className="text-xs text-center text-gray-400 mt-10">
+      <footer className="text-xs text-center text-gray-400 mt-10 p-4">
         As imagens são meramente ilustrativas e foram obtidas automaticamente por pesquisa no Google.
       </footer>
 
       <a
-        href="https://docs.google.com/spreadsheets/d/1FQRXOr27B1N7PK7NhqQmPi1kaqQqImA-iZYjRecqIw0/export?format=xlsx"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-24 right-5 bg-green-700 hover:bg-green-800 text-white p-3 rounded-full shadow-lg transition"
-        title="Baixar catálogo em Excel"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 fill-current" viewBox="0 0 24 24">
-          <path d="M19 2H8a2 2 0 00-2 2v2H5a2 2 0 00-2 2v12a2 2 0 002 2h11a2 2 0 002-2v-2h1a2 2 0 002-2V4a2 2 0 00-2-2zM5 8h1v10H5V8zm13 10a1 1 0 01-1 1H8a1 1 0 01-1-1V4h11v14zm3-4a1 1 0 01-1 1h-1V8h1a1 1 0 011 1v5z"/>
-          <path d="M10.293 12l1.853 1.854a.5.5 0 01-.707.707L9.586 12l1.853-1.854a.5.5 0 11.707.707L10.293 12z"/>
-        </svg>
-      </a>
+  href="https://docs.google.com/spreadsheets/d/1FQRXOr27B1N7PK7NhqQmPi1kaqQqImA-iZYjRecqIw0/export?format=xlsx"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="fixed bottom-24 right-5 bg-green-700 hover:bg-green-800 text-white p-3 rounded-full shadow-lg transition"
+  title="Baixar catálogo em Excel"
+>
+  <img
+    src="https://cdn-icons-png.flaticon.com/512/732/732220.png"
+    alt="Excel"
+    className="w-6 h-6 object-contain"
+  />
+</a>
+
 
       <a
-        href="https://wa.me/5511994448143"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-5 right-5 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg transition"
-        title="Fale conosco pelo WhatsApp"
-      >
-        <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
-          <path d="M12 0C5.373 0 0 5.373 0 12c0 2.11.548 4.084 1.507 5.812L0 24l6.352-1.671A11.942 11.942 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/>
-        </svg>
-      </a>
+  href="https://wa.me/5511994448143"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="fixed bottom-5 right-5 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg transition"
+  title="Fale conosco pelo WhatsApp"
+>
+ <img
+  src="https://cdn-icons-png.flaticon.com/512/5968/5968841.png"
+  alt="WhatsApp"
+  className="w-6 h-6 object-contain"
+/>
+
+</a>
     </>
   );
 }
