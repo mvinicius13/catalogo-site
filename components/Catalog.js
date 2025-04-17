@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { Copy } from 'lucide-react';
 
@@ -24,6 +23,10 @@ export default function Catalog({ categoria }) {
   const [filtros, setFiltros] = useState({});
   const [pagina, setPagina] = useState(1);
   const [ordenacao, setOrdenacao] = useState('');
+  const [buscaSKU, setBuscaSKU] = useState('');
+  const [resultadoSKU, setResultadoSKU] = useState(null);
+
+  const todasAbas = Object.values(urls);
 
   useEffect(() => {
     fetch(urls[categoria])
@@ -40,6 +43,25 @@ export default function Catalog({ categoria }) {
       });
   }, [categoria]);
 
+  const handleBuscaSKU = async () => {
+    if (!buscaSKU.trim()) {
+      setResultadoSKU(null);
+      return;
+    }
+
+    for (const url of todasAbas) {
+      const res = await fetch(url);
+      const dados = await res.json();
+      const encontrado = dados.find((item) => item.SKU?.trim() === buscaSKU.trim());
+      if (encontrado) {
+        setResultadoSKU(encontrado);
+        return;
+      }
+    }
+
+    setResultadoSKU(null);
+  };
+
   const handleFiltro = (filtro, valor) => {
     setPagina(1);
     setFiltros((prev) => {
@@ -50,6 +72,11 @@ export default function Catalog({ categoria }) {
         return { ...prev, [filtro]: [...atual, valor] };
       }
     });
+  };
+
+  const limparFiltros = () => {
+    setFiltros({});
+    setPagina(1);
   };
 
   const aplicarFiltros = (lista) => {
@@ -93,6 +120,16 @@ export default function Catalog({ categoria }) {
       <div className="w-full px-4 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between bg-white">
         <img src="/logo.png" alt="Logo LevelMicro" className="h-32 mb-2 sm:mb-0" />
         <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+          <input
+            type="text"
+            value={buscaSKU}
+            onChange={(e) => setBuscaSKU(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleBuscaSKU();
+            }}
+            placeholder="Buscar por SKU"
+            className="border px-3 py-2 text-sm rounded"
+          />
           <select
             value={ordenacao}
             onChange={(e) => setOrdenacao(e.target.value)}
@@ -112,31 +149,44 @@ export default function Catalog({ categoria }) {
       </div>
 
       <div className="flex flex-col md:flex-row gap-6 px-4 mt-4">
-        <aside className="w-full md:w-1/5 lg:w-[15%] space-y-4">
-          <h2 className="text-lg font-semibold text-gray-700">Filtros</h2>
-          {filtrosDisponiveis.map((filtro) => (
-            <div key={filtro}>
-              <h3 className="text-sm font-semibold mb-1">{filtro}</h3>
-              <div className="space-y-1">
-                {valoresUnicos(filtro).map((valor, idx) => (
-                  <label key={idx} className="flex items-center space-x-2 text-sm">
-                    <input
-                      type="checkbox"
-                      className="accent-blue-600"
-                      checked={filtros[filtro]?.includes(valor) || false}
-                      onChange={() => handleFiltro(filtro, valor)}
-                    />
-                    <span>{valor}</span>
-                  </label>
-                ))}
-              </div>
+        {!resultadoSKU && (
+          <aside className="w-full md:w-1/5 lg:w-[15%] space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-700">Filtros</h2>
+              {Object.keys(filtros).some((key) => filtros[key]?.length > 0) && (
+                <button
+                  onClick={limparFiltros}
+                  className="text-sm text-black hover:underline flex items-center space-x-1"
+                >
+                  <span className="text-lg leading-none">✖</span>
+                  <span>Limpar filtros</span>
+                </button>
+              )}
             </div>
-          ))}
-        </aside>
+            {filtrosDisponiveis.map((filtro) => (
+              <div key={filtro}>
+                <h3 className="text-sm font-semibold mb-1">{filtro}</h3>
+                <div className="space-y-1">
+                  {valoresUnicos(filtro).map((valor, idx) => (
+                    <label key={idx} className="flex items-center space-x-2 text-sm">
+                      <input
+                        type="checkbox"
+                        className="accent-blue-600"
+                        checked={filtros[filtro]?.includes(valor) || false}
+                        onChange={() => handleFiltro(filtro, valor)}
+                      />
+                      <span>{valor}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </aside>
+        )}
 
         <main className="w-full md:w-4/5 lg:w-[85%]">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {itensPagina.map((item, index) => {
+            {(resultadoSKU ? [resultadoSKU] : itensPagina).map((item, index) => {
               const avaria = item['Avarias de Funcionalidade']?.trim() || 'Sem avarias';
               const touch = item['Touch Screen']?.trim() || 'Não';
 
@@ -198,13 +248,13 @@ export default function Catalog({ categoria }) {
             })}
           </div>
 
-          {totalPaginas > 1 && (
+          {!resultadoSKU && totalPaginas > 1 && (
             <div className="flex justify-center mt-6 space-x-2">
               {Array.from({ length: totalPaginas }, (_, i) => (
                 <button
                   key={i}
                   onClick={() => setPagina(i + 1)}
-                  className={`px-3 py-1 rounded ${pagina === i + 1 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'}`}
+                  className={`px-3 py-1 rounded ${pagina === i + 1 ? 'bg-gray-600 text-white' : 'bg-gray-200 text-gray-800'}`}
                 >
                   {i + 1}
                 </button>
@@ -213,40 +263,6 @@ export default function Catalog({ categoria }) {
           )}
         </main>
       </div>
-
-      <footer className="text-xs text-center text-gray-400 mt-10 p-4">
-        As imagens são meramente ilustrativas e foram obtidas automaticamente por pesquisa no Google.
-      </footer>
-
-      <a
-  href="https://docs.google.com/spreadsheets/d/1FQRXOr27B1N7PK7NhqQmPi1kaqQqImA-iZYjRecqIw0/export?format=xlsx"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="fixed bottom-24 right-5 bg-green-700 hover:bg-green-800 text-white p-3 rounded-full shadow-lg transition"
-  title="Baixar catálogo em Excel"
->
-  <img
-    src="https://cdn-icons-png.flaticon.com/512/732/732220.png"
-    alt="Excel"
-    className="w-6 h-6 object-contain"
-  />
-</a>
-
-
-      <a
-  href="https://wa.me/5511994448143"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="fixed bottom-5 right-5 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg transition"
-  title="Fale conosco pelo WhatsApp"
->
- <img
-  src="https://cdn-icons-png.flaticon.com/512/5968/5968841.png"
-  alt="WhatsApp"
-  className="w-6 h-6 object-contain"
-/>
-
-</a>
     </>
   );
 }
