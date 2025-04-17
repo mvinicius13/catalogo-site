@@ -1,4 +1,3 @@
-
 {
   "name": "catalogo-planilha",
   "version": "1.0.0",
@@ -9,6 +8,7 @@
   },
   "dependencies": {
     "autoprefixer": "^10.4.0",
+    "lucide-react": "^0.488.0",
     "next": "latest",
     "postcss": "^8.4.0",
     "react": "latest",
