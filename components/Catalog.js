@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { Copy } from 'lucide-react';
 
@@ -74,11 +75,6 @@ export default function Catalog({ categoria }) {
     });
   };
 
-  const limparFiltros = () => {
-    setFiltros({});
-    setPagina(1);
-  };
-
   const aplicarFiltros = (lista) => {
     let filtrada = lista.filter((item) =>
       Object.entries(filtros).every(([filtro, valores]) =>
@@ -152,17 +148,20 @@ export default function Catalog({ categoria }) {
         {!resultadoSKU && (
           <aside className="w-full md:w-1/5 lg:w-[15%] space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-700">Filtros</h2>
-              {Object.keys(filtros).some((key) => filtros[key]?.length > 0) && (
-                <button
-                  onClick={limparFiltros}
-                  className="text-sm text-black hover:underline flex items-center space-x-1"
-                >
-                  <span className="text-lg leading-none">✖</span>
-                  <span>Limpar filtros</span>
-                </button>
-              )}
-            </div>
+  <h2 className="text-lg font-semibold text-gray-700">Filtros</h2>
+  {Object.values(filtros).some((val) => val?.length > 0) && (
+    <button
+      onClick={() => {
+        setFiltros({});
+        setPagina(1);
+      }}
+      className="text-sm text-black hover:underline flex items-center space-x-1"
+    >
+      <span className="text-lg leading-none">✖</span>
+      <span>Limpar filtros</span>
+    </button>
+  )}
+</div>
             {filtrosDisponiveis.map((filtro) => (
               <div key={filtro}>
                 <h3 className="text-sm font-semibold mb-1">{filtro}</h3>
@@ -263,6 +262,38 @@ export default function Catalog({ categoria }) {
           )}
         </main>
       </div>
+
+      <footer className="text-xs text-center text-gray-400 mt-10 p-4">
+        As imagens são meramente ilustrativas e foram obtidas automaticamente por pesquisa no Google.
+      </footer>
+
+      <a
+        href="https://docs.google.com/spreadsheets/d/1FQRXOr27B1N7PK7NhqQmPi1kaqQqImA-iZYjRecqIw0/export?format=xlsx"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-24 right-5 bg-green-700 hover:bg-green-800 text-white p-3 rounded-full shadow-lg transition"
+        title="Baixar catálogo em Excel"
+      >
+        <img
+          src="https://cdn-icons-png.flaticon.com/512/732/732220.png"
+          alt="Excel"
+          className="w-6 h-6 object-contain"
+        />
+      </a>
+
+      <a
+        href="https://wa.me/5511994448143"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-5 right-5 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg transition"
+        title="Fale conosco pelo WhatsApp"
+      >
+        <img
+          src="https://cdn-icons-png.flaticon.com/512/5968/5968841.png"
+          alt="WhatsApp"
+          className="w-6 h-6 object-contain"
+        />
+      </a>
     </>
   );
 }
