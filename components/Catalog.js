@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { Copy } from 'lucide-react';
 
@@ -30,7 +29,7 @@ export default function Catalog({ categoria }) {
       .then((dados) => {
         const normalizados = dados.map((item) => ({
           ...item,
-          Memória: item.Memória?.trim().toLowerCase().replace('integrada', '').trim() || item.Memória,
+          Memória: item.Memória?.trim() || item.Memória,
         }));
         setProdutos(normalizados);
         setFiltros({});
