@@ -112,6 +112,15 @@ export default function Catalog({ categoria }) {
   };
 
   return (
+<>
+  <div className="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]">
+    <img
+      src="https://i.imgur.com/ptWo1jP.png"
+      alt="Banner Catálogo"
+      className="w-full h-auto object-cover"
+    />
+  </div>
+
     <>
       <div className="w-full px-4 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between bg-white">
         <img src="/logo.png" alt="Logo LevelMicro" className="h-32 mb-2 sm:mb-0" />
@@ -295,5 +304,6 @@ export default function Catalog({ categoria }) {
         />
       </a>
     </>
+  </>
   );
 }
