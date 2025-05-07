@@ -17,6 +17,7 @@ const filtrosDisponiveis = [
   'Classificação de Chassi',
   'Classificação de Tela',
   'Estado da Bateria',
+  'Tem Placa de Vídeo'
 ];
 
 export default function Catalog({ categoria }) {
@@ -34,6 +35,7 @@ export default function Catalog({ categoria }) {
       .then((res) => res.json())
       .then((dados) => {
         const normalizados = dados.map((item) => ({
+          'Tem Placa de Vídeo': (item['Placa de Vídeo Modelo'] && item['Placa de Vídeo Modelo'].trim() !== '' && !item['Placa de Vídeo Modelo'].toLowerCase().includes('dedicada')) ? 'Sim' : 'Não',
           ...item,
           Memória: item.Memória?.trim() || item.Memória,
         }));
@@ -239,6 +241,9 @@ export default function Catalog({ categoria }) {
                     <div className="flex justify-between border rounded px-2 py-1 bg-gray-50">
                       <span><strong>Avaria:</strong> {avaria}</span>
                       <span><strong>Idioma:</strong> {item['Linguagem']}</span>
+                    </div>
+                    <div className="border rounded px-2 py-1 bg-gray-50">
+                      <strong>Placa de Vídeo:</strong> {item['Placa de Vídeo Modelo'] || 'Não'}
                     </div>
                     <div className="border rounded px-2 py-1 bg-gray-50">
                       <strong>Resolução:</strong> {item['Resolução']}
