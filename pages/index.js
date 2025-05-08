@@ -9,6 +9,7 @@ export default function Home() {
   const categorias = {
     i5: 'Notebooks i5',
     i7: 'Notebooks i7',
+    mac: 'Macbooks',
     desktop: 'Desktops',
   };
 
