@@ -272,10 +272,10 @@ export default function Catalog({ categoria }) {
                     <div className="border rounded px-2 py-1 bg-gray-50"><strong>Resolução:</strong> {item['Resolução']}</div>
                   </div>
                   <p className="mt-2 text-black font-bold text-lg">
-                    {item[' Valor PIX ']} <span className="text-sm font-normal">à vista via PIX</span>
+                    {item[' Valor PIX ']} <span className="text-sm font-normal">no PIX com desconto</span>
                   </p>
                   <p className="text-green-600 font-semibold text-sm">
-                    {item[' Valor Cartão 10x ']} <span className="font-normal">em até 10x no cartão</span>
+                    {item[' Valor Cartão 10x ']} <span className="font-normal">em 10x sem juros no cartão de crédito</span>
                   </p>
                 </div>
               ))
