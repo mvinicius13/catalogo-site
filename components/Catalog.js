@@ -31,24 +31,29 @@ export default function Catalog({ categoria }) {
 
   const todasAbas = Object.values(urls);
 
+  // --- util: normaliza campos usados em filtros e exibição ---
+  const normalizar = (item) => ({
+    'Tem Placa de Vídeo':
+      item['Placa de Vídeo Modelo'] &&
+      item['Placa de Vídeo Modelo'].trim() !== '' &&
+      !String(item['Placa de Vídeo Modelo']).toLowerCase().includes('integrada')
+        ? 'Sim'
+        : 'Não',
+    ...item,
+    Memória: item.Memória?.trim() ?? item.Memória,
+  });
+
   useEffect(() => {
     fetch(urls[categoria])
       .then((res) => res.json())
       .then((dados) => {
-        const normalizados = dados.map((item) => ({
-          'Tem Placa de Vídeo':
-            item['Placa de Vídeo Modelo'] &&
-            item['Placa de Vídeo Modelo'].trim() !== '' &&
-            !item['Placa de Vídeo Modelo'].toLowerCase().includes('integrada')
-              ? 'Sim'
-              : 'Não',
-          ...item,
-          Memória: item.Memória?.trim() || item.Memória,
-        }));
+        const normalizados = dados.map(normalizar);
         setProdutos(normalizados);
         setFiltros({});
         setPagina(1);
         setOrdenacao('');
+        setResultadoSKU(null);
+        setResultadoNome([]);
       });
   }, [categoria]);
 
@@ -81,14 +86,16 @@ export default function Catalog({ categoria }) {
       const dados = await res.json();
       const encontrado = dados.find((item) => item.SKU?.trim() === sku);
       if (encontrado) {
-        setResultadoSKU(encontrado);
+        setResultadoSKU(normalizar(encontrado));
         setResultadoNome([]);
+        setPagina(1); // garante primeira página
         setBuscando(false);
         return;
       }
     }
     setResultadoSKU(null);
     setResultadoNome([]);
+    setPagina(1);
     setBuscando(false);
   };
 
@@ -98,13 +105,14 @@ export default function Catalog({ categoria }) {
     for (const url of todasAbas) {
       const res = await fetch(url);
       const dados = await res.json();
-      const filtrados = dados.filter((item) =>
-        `${item.Fabricante} ${item.Modelo}`.toLowerCase().includes(nome.toLowerCase())
-      );
+      const filtrados = dados
+        .filter((item) => `${item.Fabricante} ${item.Modelo}`.toLowerCase().includes(nome.toLowerCase()))
+        .map(normalizar);
       resultados = resultados.concat(filtrados);
     }
     setResultadoNome(resultados);
     setResultadoSKU(null);
+    setPagina(1); // garante primeira página
     setBuscando(false);
   };
 
@@ -121,19 +129,19 @@ export default function Catalog({ categoria }) {
   const aplicarFiltros = (lista) => {
     let filtrada = lista.filter((item) =>
       Object.entries(filtros).every(([filtro, valores]) =>
-        valores.length === 0 || valores.includes(item[filtro])
+        (valores?.length ?? 0) === 0 || valores.includes(item[filtro])
       )
     );
 
     if (ordenacao === 'precoMenor') {
       filtrada.sort((a, b) =>
-        parseFloat(a[' Valor PIX '].replace(/[R$\s.]/g, '').replace(',', '.')) -
-        parseFloat(b[' Valor PIX '].replace(/[R$\s.]/g, '').replace(',', '.'))
+        parseFloat(String(a[' Valor PIX ']).replace(/[R$\s.]/g, '').replace(',', '.')) -
+        parseFloat(String(b[' Valor PIX ']).replace(/[R$\s.]/g, '').replace(',', '.'))
       );
     } else if (ordenacao === 'precoMaior') {
       filtrada.sort((a, b) =>
-        parseFloat(b[' Valor PIX '].replace(/[R$\s.]/g, '').replace(',', '.')) -
-        parseFloat(a[' Valor PIX '].replace(/[R$\s.]/g, '').replace(',', '.'))
+        parseFloat(String(b[' Valor PIX ']).replace(/[R$\s.]/g, '').replace(',', '.')) -
+        parseFloat(String(a[' Valor PIX ']).replace(/[R$\s.]/g, '').replace(',', '.'))
       );
     }
 
@@ -141,7 +149,12 @@ export default function Catalog({ categoria }) {
   };
 
   const valoresUnicos = (chave) => {
-    const todos = (resultadoSKU ? [resultadoSKU] : resultadoNome.length > 0 ? resultadoNome : produtos).map((p) => p[chave]).filter(Boolean);
+    const base = resultadoSKU
+      ? [resultadoSKU]
+      : resultadoNome.length > 0
+      ? resultadoNome
+      : produtos;
+    const todos = base.map((p) => p[chave]).filter(Boolean);
     return [...new Set(todos)];
   };
 
@@ -157,7 +170,7 @@ export default function Catalog({ categoria }) {
     : produtos;
 
   const listaFiltrada = aplicarFiltros(baseLista);
-  const totalPaginas = Math.ceil(listaFiltrada.length / 16);
+  const totalPaginas = Math.ceil(listaFiltrada.length / 16) || 1;
   const itensPagina = listaFiltrada.slice((pagina - 1) * 16, pagina * 16);
 
   return (
@@ -284,7 +297,8 @@ export default function Catalog({ categoria }) {
             )}
           </div>
 
-          {resultadoSKU === null && resultadoNome.length === 0 && totalPaginas > 1 && (
+          {/* Mostrar paginação SEM restringir quando houver resultadoNome */}
+          {totalPaginas > 1 && (
             <div className="flex justify-center mt-6 space-x-2">
               {Array.from({ length: totalPaginas }, (_, i) => (
                 <button
