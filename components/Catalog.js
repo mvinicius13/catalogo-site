@@ -158,12 +158,12 @@ export default function Catalog({ categoria }) {
     {
       src: 'https://i.imgur.com/o78JGHw.pngq=80&w=1600&auto=format&fit=crop',
       alt: 'ssd 512',
-      href: 'https://wa.me/5511994448143?text=Tenho%20interesse%20na%20promo%20i5',
+      href: 'http://wa.me/5511994448143?text=Quero%20aproveitar%20o%20upgrade%20de%20SSD%20Gr%C3%A1tis!',
     },
     {
       src: 'https://i.imgur.com/CiV83XC.pngq=80&w=1600&auto=format&fit=crop',
       alt: 'lenovo t14',
-      href: 'https://wa.me/5511994448143?text=Tenho%20interesse%20na%20promo%20i7',
+      href: 'http://wa.me/5511994448143?text=Quero%20comprar%20Lenovo%20ThinkPad%20T14!',
     },
      ];
 
