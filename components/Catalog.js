@@ -18,24 +18,37 @@ const filtrosDisponiveis = [
   'Tem Placa de Vídeo',
 ];
 
-/* ========= WhatsApp seguro por rota =========
-   /catalogo    -> 5511994448143 (padrão)
-   /catalogo-ca -> 5511916370581 (vendedor CA)
-   Qualquer outra rota cai no padrão.
-*/
-const WHATSAPP_NUMBERS = {
-  'catalogo': '5511994448143',
-  'catalogo-ca': '5511916370581',
+/* ================== WHATSAPP POR WHITELIST ==================
+   Identificadores permitidos (ninguém injeta número):
+   - default -> 5511994448143 (seu)
+   - ca      -> 5511916370581 (vendedor CA)
+   Como selecionar:
+   - https://catalogolevelmicro.vercel.app?rep=ca   (query)
+   - https://catalogolevelmicro.vercel.app#ca       (hash)
+   - Sem nada -> default
+============================================================== */
+const REP_MAP = {
+  default: '5511994448143',
+  ca: '5511916370581',
 };
 
-function getWhatsAppNumberFromPath() {
+function resolveRepId() {
   try {
-    const firstSegment = window.location.pathname.replace(/^\/+/, '').split('/')[0] || 'catalogo';
-    const phone = WHATSAPP_NUMBERS[firstSegment] || WHATSAPP_NUMBERS['catalogo'];
-    return String(phone).replace(/\D/g, '');
+    const params = new URLSearchParams(window.location.search);
+    const repQ = params.get('rep');     // ?rep=ca
+    if (repQ && REP_MAP[repQ]) return repQ;
+
+    const repH = (window.location.hash || '').replace(/^#/, ''); // #ca
+    if (repH && REP_MAP[repH]) return repH;
+
+    return 'default';
   } catch {
-    return WHATSAPP_NUMBERS['catalogo'];
+    return 'default';
   }
+}
+
+function buildWaLink(phone, msg = 'Olá! Vim pelo catálogo e quero ajuda.') {
+  return `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
 }
 
 /**
@@ -54,9 +67,12 @@ function PromoCarousel({ items = [], interval = 5000, className = '' }) {
 
   useEffect(() => {
     if (count === 0) return;
-    timerRef.current = setInterval(() => {
-      setIndex((prev) => (prev + 1) % count);
-    }, interval);
+    const start = () => {
+      timerRef.current = setInterval(() => {
+        setIndex((prev) => (prev + 1) % count);
+      }, interval);
+    };
+    start();
     return () => clearInterval(timerRef.current);
   }, [count, interval]);
 
@@ -64,14 +80,9 @@ function PromoCarousel({ items = [], interval = 5000, className = '' }) {
   const next = () => goTo(index + 1);
   const prev = () => goTo(index - 1);
 
-  const pause = () => {
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-  };
+  const pause = () => timerRef.current && clearInterval(timerRef.current);
   const resume = () => {
-    if (!timerRef.current && count > 1) {
+    if (!timerRef.current) {
       timerRef.current = setInterval(() => {
         setIndex((prev) => (prev + 1) % count);
       }, interval);
@@ -173,17 +184,19 @@ export default function Catalog({ categoria }) {
   const [resultadoNome, setResultadoNome] = useState([]);
   const [buscando, setBuscando] = useState(false);
 
-  // número de WhatsApp da rota atual
-  const [waPhone, setWaPhone] = useState(WHATSAPP_NUMBERS['catalogo']);
+  // número de WhatsApp escolhido via whitelist (?rep=ca ou #ca)
+  const [waPhone, setWaPhone] = useState(REP_MAP.default);
   useEffect(() => {
-    setWaPhone(getWhatsAppNumberFromPath());
+    const repId = resolveRepId();
+    setWaPhone(REP_MAP[repId] || REP_MAP.default);
   }, []);
 
-  const wa = (msg) => `https://wa.me/${waPhone}?text=${encodeURIComponent(msg || 'Olá! Vim pelo catálogo e quero ajuda.')}`;
+  // helper para construir link de WhatsApp com mensagem
+  const wa = (msg) => buildWaLink(waPhone, msg);
 
   const todasAbas = Object.values(urls);
 
-  // === Imagens do carrossel promocional (mantendo suas imagens, links dinâmicos) ===
+  // === Imagens do carrossel promocional (mantendo as suas URLs) ===
   const promoItems = [
     {
       src: 'https://i.imgur.com/o78JGHw.pngq=80&w=1600&auto=format&fit=crop',
@@ -430,7 +443,7 @@ export default function Catalog({ categoria }) {
           ))}
         </aside>
 
-        {/* AQUI: principal agora ocupa toda a largura disponível */}
+        {/* Principal */}
         <main className="w-full">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {itensPagina.length > 0 ? (
@@ -441,7 +454,7 @@ export default function Catalog({ categoria }) {
                     alt={item.Modelo}
                     className="w-full h-40 object-contain bg-gray-50 rounded mb-2"
                   />
-                    <h2 className="text-base font-semibold text-gray-800 mb-1">{item.Fabricante} {item.Modelo}</h2>
+                  <h2 className="text-base font-semibold text-gray-800 mb-1">{item.Fabricante} {item.Modelo}</h2>
                   <div className="flex justify-between text-xs text-gray-600 mb-2">
                     <span className="bg-gray-100 px-2 py-1 rounded flex items-center gap-1">
                       SKU: {item.SKU}
@@ -515,7 +528,7 @@ export default function Catalog({ categoria }) {
         />
       </a>
 
-      {/* WhatsApp (dinâmico por rota, seguro) */}
+      {/* WhatsApp (dinâmico por whitelist: default / ca) */}
       <a
         href={wa('Olá! Vim pelo catálogo e quero falar com um vendedor.')}
         target="_blank"
