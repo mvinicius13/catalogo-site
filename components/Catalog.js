@@ -18,32 +18,6 @@ const filtrosDisponiveis = [
   'Tem Placa de Vídeo',
 ];
 
-/* ============================================================
-   WHATSAPP FIXO por ROTA (somente 2 caminhos permitidos)
-   - /catalogo             -> seu número (padrão)
-   - /catalogo-vendedor    -> número do vendedor
-   Se a rota não existir no mapa, usa SEMPRE o seu número.
-============================================================ */
-const REP_DEFAULT = '5511994448143'; // <<<<<< SEU NÚMERO
-const REP_MAP = {
-  'catalogo': REP_DEFAULT,
-  'catalogo-ca': '5511916370581', // <<<<<< NÚMERO DO VENDEDOR (edite aqui)
-};
-
-function resolveWhatsFromPath() {
-  try {
-    const path = window.location.pathname.replace(/\/+$/, ''); // remove barra final
-    const slug = path.split('/').filter(Boolean).pop() || 'catalogo';
-    const phone = REP_MAP[slug] || REP_DEFAULT;
-    return String(phone).replace(/\D/g, '');
-  } catch {
-    return REP_DEFAULT;
-  }
-}
-
-const buildWaLink = (phone, msg = 'Olá! Vim pelo catálogo e quero ajuda.') =>
-  `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
-
 /**
  * Carrossel Promocional
  * - Recebe lista de imagens com { src, alt, href }
@@ -73,14 +47,9 @@ function PromoCarousel({ items = [], interval = 5000, className = '' }) {
   const next = () => goTo(index + 1);
   const prev = () => goTo(index - 1);
 
-  const pause = () => {
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-  };
+  const pause = () => timerRef.current && clearInterval(timerRef.current);
   const resume = () => {
-    if (!timerRef.current && count > 1) {
+    if (!timerRef.current) {
       timerRef.current = setInterval(() => {
         setIndex((prev) => (prev + 1) % count);
       }, interval);
@@ -182,36 +151,21 @@ export default function Catalog({ categoria }) {
   const [resultadoNome, setResultadoNome] = useState([]);
   const [buscando, setBuscando] = useState(false);
 
-  // número de WhatsApp escolhido pela rota
-  const [waPhone, setWaPhone] = useState(REP_DEFAULT);
-
-  useEffect(() => {
-    setWaPhone(resolveWhatsFromPath());
-  }, []);
-
-  // helper de link de WhatsApp
-  const waLink = (msg) => buildWaLink(waPhone, msg);
-
   const todasAbas = Object.values(urls);
 
-  // === Imagens do carrossel promocional (agora com waLink dinâmico) ===
+  // === Imagens do carrossel promocional (edite livremente) ===
   const promoItems = [
     {
-      src: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=1600&auto=format&fit=crop',
-      alt: 'Super Promo - Notebooks i5',
-      href: waLink('Tenho interesse na promoção de Notebooks i5'),
+      src: 'https://i.imgur.com/o78JGHw.pngq=80&w=1600&auto=format&fit=crop',
+      alt: 'ssd 512',
+      href: 'https://wa.me/5511994448143?text=Tenho%20interesse%20na%20promo%20i5',
     },
     {
-      src: 'https://images.unsplash.com/photo-1518779578993-ec3579fee39f?q=80&w=1600&auto=format&fit=crop',
-      alt: 'Ofertas em i7 para empresas',
-      href: waLink('Tenho interesse nas ofertas de i7'),
+      src: 'https://i.imgur.com/CiV83XC.pngq=80&w=1600&auto=format&fit=crop',
+      alt: 'lenovo t14',
+      href: 'https://wa.me/5511994448143?text=Tenho%20interesse%20na%20promo%20i7',
     },
-    {
-      src: 'https://images.unsplash.com/photo-1517059224940-d4af9eec41e5?q=80&w=1600&auto=format&fit=crop',
-      alt: 'Linha Mac com condições especiais',
-      href: waLink('Tenho interesse na linha Mac'),
-    },
-  ];
+     ];
 
   // --- util: normaliza campos usados em filtros e exibição ---
   const normalizar = (item) => ({
@@ -357,14 +311,22 @@ export default function Catalog({ categoria }) {
 
   return (
     <>
-      {/* Banner full-bleed */}
-      <div className="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]">
-        <img src="https://i.imgur.com/ptWo1jP.png" alt="Banner Catálogo" className="w-full h-auto object-cover" />
+      {/* Banner centralizado com borda arredondada e sombra */}
+      <div className="px-4 mt-4">
+        <div className="max-w-[1600px] mx-auto rounded-2xl overflow-hidden shadow">
+          <img
+            src="https://i.imgur.com/zw9h0iN.png"
+            alt="Banner Catálogo"
+            className="w-full h-auto object-cover"
+          />
+        </div>
       </div>
 
-      {/* Carrossel promocional */}
+      {/* Carrossel promocional (mesma largura do banner) */}
       <div className="px-4 mt-4">
-        <PromoCarousel items={promoItems} />
+        <div className="max-w-[1600px] mx-auto">
+          <PromoCarousel items={promoItems} />
+        </div>
       </div>
 
       {/* Barra topo com logo e controles */}
@@ -403,7 +365,8 @@ export default function Catalog({ categoria }) {
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-6 px-4 mt-4">
+      {/* Área principal com container largo */}
+      <div className="flex flex-col md:flex-row gap-6 px-4 mt-4 max-w-[1600px] mx-auto">
         <aside className="w-full md:w-1/5 lg:w-[15%] space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold text-gray-700">Filtros</h2>
@@ -437,6 +400,7 @@ export default function Catalog({ categoria }) {
           ))}
         </aside>
 
+        {/* AQUI: principal agora ocupa toda a largura disponível */}
         <main className="w-full">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {itensPagina.length > 0 ? (
@@ -506,22 +470,6 @@ export default function Catalog({ categoria }) {
         As imagens são meramente ilustrativas e foram obtidas automaticamente por pesquisa no Google.
       </footer>
 
-      {/* Botão flutuante de WhatsApp com número bloqueado por whitelist */}
-      <a
-        href={waLink('Olá! Vim pelo catálogo e quero falar com um vendedor.')}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-5 right-5 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg transition"
-        title="Fale conosco pelo WhatsApp"
-      >
-        <img
-          src="https://cdn-icons-png.flaticon.com/512/5968/5968841.png"
-          alt="WhatsApp"
-          className="w-6 h-6 object-contain"
-        />
-      </a>
-
-      {/* Botão Excel flutuante (mantido) */}
       <a
         href="https://docs.google.com/spreadsheets/d/1FQRXOr27B1N7PK7NhqQmPi1kaqQqImA-iZYjRecqIw0/export?format=xlsx"
         target="_blank"
@@ -532,6 +480,20 @@ export default function Catalog({ categoria }) {
         <img
           src="https://cdn-icons-png.flaticon.com/512/732/732220.png"
           alt="Excel"
+          className="w-6 h-6 object-contain"
+        />
+      </a>
+
+      <a
+        href="https://wa.me/5511994448143"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-5 right-5 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg transition"
+        title="Fale conosco pelo WhatsApp"
+      >
+        <img
+          src="https://cdn-icons-png.flaticon.com/512/5968/5968841.png"
+          alt="WhatsApp"
           className="w-6 h-6 object-contain"
         />
       </a>
