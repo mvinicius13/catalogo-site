@@ -18,6 +18,26 @@ const filtrosDisponiveis = [
   'Tem Placa de Vídeo',
 ];
 
+/* ========= WhatsApp seguro por rota =========
+   /catalogo    -> 5511994448143 (padrão)
+   /catalogo-ca -> 5511916370581 (vendedor CA)
+   Qualquer outra rota cai no padrão.
+*/
+const WHATSAPP_NUMBERS = {
+  'catalogo': '5511994448143',
+  'catalogo-ca': '5511916370581',
+};
+
+function getWhatsAppNumberFromPath() {
+  try {
+    const firstSegment = window.location.pathname.replace(/^\/+/, '').split('/')[0] || 'catalogo';
+    const phone = WHATSAPP_NUMBERS[firstSegment] || WHATSAPP_NUMBERS['catalogo'];
+    return String(phone).replace(/\D/g, '');
+  } catch {
+    return WHATSAPP_NUMBERS['catalogo'];
+  }
+}
+
 /**
  * Carrossel Promocional
  * - Recebe lista de imagens com { src, alt, href }
@@ -34,12 +54,9 @@ function PromoCarousel({ items = [], interval = 5000, className = '' }) {
 
   useEffect(() => {
     if (count === 0) return;
-    const start = () => {
-      timerRef.current = setInterval(() => {
-        setIndex((prev) => (prev + 1) % count);
-      }, interval);
-    };
-    start();
+    timerRef.current = setInterval(() => {
+      setIndex((prev) => (prev + 1) % count);
+    }, interval);
     return () => clearInterval(timerRef.current);
   }, [count, interval]);
 
@@ -47,9 +64,14 @@ function PromoCarousel({ items = [], interval = 5000, className = '' }) {
   const next = () => goTo(index + 1);
   const prev = () => goTo(index - 1);
 
-  const pause = () => timerRef.current && clearInterval(timerRef.current);
+  const pause = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  };
   const resume = () => {
-    if (!timerRef.current) {
+    if (!timerRef.current && count > 1) {
       timerRef.current = setInterval(() => {
         setIndex((prev) => (prev + 1) % count);
       }, interval);
@@ -151,21 +173,29 @@ export default function Catalog({ categoria }) {
   const [resultadoNome, setResultadoNome] = useState([]);
   const [buscando, setBuscando] = useState(false);
 
+  // número de WhatsApp da rota atual
+  const [waPhone, setWaPhone] = useState(WHATSAPP_NUMBERS['catalogo']);
+  useEffect(() => {
+    setWaPhone(getWhatsAppNumberFromPath());
+  }, []);
+
+  const wa = (msg) => `https://wa.me/${waPhone}?text=${encodeURIComponent(msg || 'Olá! Vim pelo catálogo e quero ajuda.')}`;
+
   const todasAbas = Object.values(urls);
 
-  // === Imagens do carrossel promocional (edite livremente) ===
+  // === Imagens do carrossel promocional (mantendo suas imagens, links dinâmicos) ===
   const promoItems = [
     {
       src: 'https://i.imgur.com/o78JGHw.pngq=80&w=1600&auto=format&fit=crop',
       alt: 'ssd 512',
-      href: 'https://wa.me/5511994448143?text=Tenho%20interesse%20na%20promo%20i5',
+      href: wa('Tenho interesse na promoção: SSD 512'),
     },
     {
       src: 'https://i.imgur.com/CiV83XC.pngq=80&w=1600&auto=format&fit=crop',
       alt: 'lenovo t14',
-      href: 'https://wa.me/5511994448143?text=Tenho%20interesse%20na%20promo%20i7',
+      href: wa('Tenho interesse na promoção: Lenovo T14'),
     },
-     ];
+  ];
 
   // --- util: normaliza campos usados em filtros e exibição ---
   const normalizar = (item) => ({
@@ -411,7 +441,7 @@ export default function Catalog({ categoria }) {
                     alt={item.Modelo}
                     className="w-full h-40 object-contain bg-gray-50 rounded mb-2"
                   />
-                  <h2 className="text-base font-semibold text-gray-800 mb-1">{item.Fabricante} {item.Modelo}</h2>
+                    <h2 className="text-base font-semibold text-gray-800 mb-1">{item.Fabricante} {item.Modelo}</h2>
                   <div className="flex justify-between text-xs text-gray-600 mb-2">
                     <span className="bg-gray-100 px-2 py-1 rounded flex items-center gap-1">
                       SKU: {item.SKU}
@@ -470,6 +500,7 @@ export default function Catalog({ categoria }) {
         As imagens são meramente ilustrativas e foram obtidas automaticamente por pesquisa no Google.
       </footer>
 
+      {/* Excel */}
       <a
         href="https://docs.google.com/spreadsheets/d/1FQRXOr27B1N7PK7NhqQmPi1kaqQqImA-iZYjRecqIw0/export?format=xlsx"
         target="_blank"
@@ -484,8 +515,9 @@ export default function Catalog({ categoria }) {
         />
       </a>
 
+      {/* WhatsApp (dinâmico por rota, seguro) */}
       <a
-        href="https://wa.me/5511994448143"
+        href={wa('Olá! Vim pelo catálogo e quero falar com um vendedor.')}
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-5 right-5 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg transition"
